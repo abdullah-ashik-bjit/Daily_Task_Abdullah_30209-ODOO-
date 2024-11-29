@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Author Profile - Cricket News{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Author Profile Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" class="rounded-circle" width="150" height="150" alt="Profile Image">
+                        {% else %}
+                            <div class="bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                                <i class="fas fa-user fa-4x"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <h4 class="card-title">{{ user.get_full_name|default:user.username }}</h4>
+                    <p class="text-muted">Author since {{ user.date_joined|date:"F Y" }}</p>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Author Stats -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Author Stats</h5>
+                    <div class="row text-center">
+                        <div class="col">
+                            <h3>{{ user.news_set.count }}</h3>
+                            <small class="text-muted">Articles</small>
+                        </div>
+                        <div class="col">
+                            <h3>0</h3>
+                            <small class="text-muted">Views</small>
+                        </div>
+                        <div class="col">
+                            <h3>0</h3>
+                            <small class="text-muted">Likes</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Author's Articles -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Articles</h5>
+                    <a href="#" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> New Article
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if user.news_set.all %}
+                        <div class="list-group list-group-flush">
+                            {% for article in user.news_set.all %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ article.title }}</h6>
+                                            <small class="text-muted">
+                                                <i class="far fa-calendar"></i> {{ article.created_at|date:"F d, Y" }}
+                                            </small>
+                                        </div>
+                                        <div class="btn-group">
+                                            <a href="{% url 'news_detail' article.pk %}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+
+                                            <a href="#" class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">You haven't published any articles yet.</p>
+                            <a href="#" class="btn btn-primary">Write Your First Article</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Draft Articles -->
+            <div class="card mt-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Draft Articles</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-3">
+                        <p class="text-muted">No draft articles found.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

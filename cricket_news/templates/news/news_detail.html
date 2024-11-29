@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} - Cricket News{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <article class="blog-post">
+                    <!-- Article Header -->
+                    <h1 class="mb-3">{{ article.title }}</h1>
+                    <div class="mb-4">
+                        <span class="text-muted">
+                            Published on {{ article.created_at|date:"F d, Y" }}
+                            {% if article.author %}
+                                by {{ article.author.get_full_name|default:article.author.username }}
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <!-- Featured Image -->
+                    {% if article.image %}
+                        <div class="mb-4">
+                            <img src="{{ article.image.url }}" class="img-fluid rounded" alt="{{ article.title }}">
+                        </div>
+                    {% endif %}
+
+                    <!-- Article Content -->
+                    <div class="article-content">
+                        {{ article.content|linebreaks }}
+                    </div>
+
+                    <!-- Tags -->
+                    {% if article.tags.all %}
+                        <div class="mt-4">
+                            {% for tag in article.tags.all %}
+                                <span class="badge bg-secondary me-1">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Social Share Buttons -->
+                    <div class="mt-4 mb-4">
+                        <h5>Share this article:</h5>
+                        <a href="#" class="btn btn-primary me-2">
+                            <i class="fab fa-facebook"></i> Share
+                        </a>
+                        <a href="#" class="btn btn-info me-2">
+                            <i class="fab fa-twitter"></i> Tweet
+                        </a>
+                    </div>
+
+                  
+                    {% if user == article.author %}
+                    <a href="{% url 'edit_news' article.pk %}" class="btn btn-outline-primary">
+                        <i class="fas fa-edit"></i> Edit Article
+                    </a>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        <!-- Comments Section -->
+                        <div class="mt-5">
+                            <h3>Comments</h3>
+                            <!-- Add comment form here if implemented -->
+                        </div>
+                    {% endif %}
+                </article>
+
+                <!-- Related Articles -->
+                <div class="mt-5">
+                    <h3>Related Articles</h3>
+                    <div class="row">
+                        {% for related in related_articles|slice:":3" %}
+                            <div class="col-md-4">
+                                <div class="card mb-4">
+                                    {% if related.image %}
+                                        <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.title }}">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ related.title }}</h5>
+                                        <a href="{% url 'news_detail' related.pk %}" class="btn btn-sm btn-primary">Read More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

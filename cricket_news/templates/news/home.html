@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Cricket News{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+    <!-- Author Dashboard -->
+    <div class="container py-4">
+        <!-- Welcome & Stats -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4>Welcome, {{ user.username }}!</h4>
+                        <p class="text-muted mb-0">
+                            You have published {{ total_articles }} articles
+                            {% if latest_news %}
+                                · Latest on {{ latest_news.0.pub_date|date:"F d, Y" }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Quick Actions -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'create_news' %}" class="btn btn-primary">New Article</a>
+                            <a href="#" class="btn btn-outline-secondary">My Articles</a>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Articles -->
+            <div class="col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Recent Articles</h5>
+                        {% for article in recent_articles %}
+                            <div class="border-bottom pb-3 mb-3">
+                                <h6>{{ article.title }}</h6>
+                                <p class="text-muted small mb-2">{{ article.content|truncatewords:15 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">{{ article.pub_date|date:"F d, Y" }}</small>
+                                    <div>
+                                        <a href="{% url 'news_detail' article.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="{% url 'edit_news' article.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-center text-muted my-4">No articles yet. Write your first one!</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+    <!-- Public Home -->
+    <div class="container py-4">
+        <!-- Featured Article -->
+        {% if featured_article %}
+            <div class="card mb-4">
+                {% if featured_article.image %}
+                    <img src="{{ featured_article.image.url }}" class="card-img-top" alt="{{ featured_article.title }}" 
+                         style="height: 400px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">{{ featured_article.title }}</h2>
+                    <p class="card-text">{{ featured_article.content|truncatewords:30 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">{{ featured_article.pub_date|date:"F d, Y" }}</small>
+                        <a href="{% url 'news_detail' featured_article.id %}" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="row">
+            <!-- Latest News -->
+            <div class="col-md-8">
+                <h4 class="mb-3">Latest News</h4>
+                <div class="row">
+                    {% for article in latest_news %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                {% if article.image %}
+                                    <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}" 
+                                         style="height: 200px; object-fit: cover;">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ article.title }}</h5>
+                                    <p class="card-text small">{{ article.content|truncatewords:15 }}</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">{{ article.pub_date|date:"F d, Y" }}</small>
+                                        <a href="{% url 'news_detail' article.id %}" class="btn btn-sm btn-primary">Read More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Updates -->
+            <div class="col-md-4">
+                <h4 class="mb-3">Recent Updates</h4>
+                <div class="card">
+                    <div class="list-group list-group-flush">
+                        {% for article in trending_news %}
+                            <a href="{% url 'news_detail' article.id %}" class="list-group-item list-group-item-action">
+                                <h6 class="mb-1">{{ article.title }}</h6>
+                                <small class="text-muted">{{ article.pub_date|date:"F d, Y" }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    .card-title {
+        color: #333;
+    }
+    .btn-sm {
+        padding: .25rem .75rem;
+    }
+</style>
+{% endblock %}

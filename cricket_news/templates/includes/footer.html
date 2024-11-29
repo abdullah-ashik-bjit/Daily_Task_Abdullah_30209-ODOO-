@@ -1,0 +1,33 @@
+<footer class="footer mt-auto py-3 bg-dark">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 text-light">
+                <h5>About Cricket News</h5>
+                <p class="small">Your trusted source for cricket updates and news.</p>
+            </div>
+            <div class="col-md-4 text-light">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'home' %}" class="text-light">Home</a></li>
+                    <li><a href="{% url 'news_list' %}" class="text-light">News</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'profile' %}" class="text-light">Author Profile</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="col-md-4 text-light">
+                <h5>For Authors</h5>
+                {% if user.is_authenticated %}
+                    <p class="small">Welcome to our author community!</p>
+                {% else %}
+                    <p class="small">Want to contribute? <a href="{% url 'register' %}" class="text-light">Join as an author</a></p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col text-center text-light">
+                <small>&copy; 2024 Cricket News. All rights reserved.</small>
+            </div>
+        </div>
+    </div>
+</footer>
